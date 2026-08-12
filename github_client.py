@@ -15,7 +15,8 @@ class GitHubClient:
         response = requests.get(
             url,
             headers=HEADERS,
-            params=params
+            params=params,
+            timeout=30
         )
 
         if response.status_code == 200:
@@ -32,7 +33,7 @@ class GitHubClient:
 
         url = f"{self.BASE_URL}{endpoint}"
 
-        response = requests.post(url, headers=HEADERS, json=data)
+        response = requests.post(url, headers=HEADERS, json=data, timeout=30)
 
         if response.status_code in [200, 201]:
             return response.json()
@@ -52,7 +53,8 @@ class GitHubClient:
     url,
     headers=HEADERS,
     json=data,
-    params=params
+    params=params,
+    timeout=30
 )
 
         if response.status_code not in [200, 201]:

@@ -34,16 +34,17 @@ class PullRequestGenerator:
         }
 
     def generate_branch_name(self, issue: str) -> str:
-
         cleaned = issue.lower()
 
         cleaned = re.sub(
             r"[^a-z0-9]+",
             "-",
-            cleaned
+            cleaned,
         )
 
         cleaned = cleaned.strip("-")
+
+        cleaned = cleaned[:50].rstrip("-")
 
         return f"fix/{cleaned}"
 

@@ -23,13 +23,27 @@ def list_files(repo_name):
     return files
 
 
-def read_file(repo_name, file_path):
+def read_file(
+    repo_name,
+    file_path,
+    branch=None
+):
     """
-    Read the contents of a file from a repository.
+    Read the contents of a file from a GitHub repository.
     """
 
+    if branch is None:
+        repo = client.get(
+            f"/repos/{USERNAME}/{repo_name}"
+        )
+
+        branch = repo["default_branch"]
+
     data = client.get(
-        f"/repos/{USERNAME}/{repo_name}/contents/{file_path}"
+        f"/repos/{USERNAME}/{repo_name}/contents/{file_path}",
+        params={
+            "ref": branch
+        }
     )
 
     content = base64.b64decode(
@@ -44,8 +58,14 @@ def repository_tree(repo_name):
     Return every file and folder in the repository.
     """
 
+    repo = client.get(
+        f"/repos/{USERNAME}/{repo_name}"
+    )
+
+    default_branch = repo["default_branch"]
+
     tree = client.get(
-        f"/repos/{USERNAME}/{repo_name}/git/trees/main?recursive=1"
+        f"/repos/{USERNAME}/{repo_name}/git/trees/{default_branch}?recursive=1"
     )
 
     items = []

@@ -7,7 +7,8 @@ def replace_code(
     file_path: str,
     old_code: str,
     new_code: str,
-    commit_message: str
+    commit_message: str,
+    branch: str = "main"
 ):
     """
     Replace a code snippet inside a file and commit the change.
@@ -37,7 +38,8 @@ def replace_code(
         repo_name,
         file_path,
         updated,
-        commit_message
+        commit_message,
+        branch=branch
     )
 
     return {

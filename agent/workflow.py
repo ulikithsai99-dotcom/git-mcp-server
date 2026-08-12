@@ -6,7 +6,7 @@ from .models import (
     RepairPlan,
     FileCandidate
 )
-from intelligence.mock_provider import MockProvider
+from intelligence.openai_provider import OpenAIProvider
 from intelligence.analyzer import Analyzer
 from intelligence.repair_engine import RepairEngine
 
@@ -27,8 +27,8 @@ class SoftwareEngineerWorkflow:
         self.fixer = Fixer(tools)
         self.pr_generator = PullRequestGenerator(tools)
         self.repair_engine = RepairEngine(
-            Analyzer(MockProvider())
-        )
+             Analyzer(OpenAIProvider())
+             )
 
     def start(
         self,
@@ -95,9 +95,30 @@ class SoftwareEngineerWorkflow:
         # AI analysis
         plan = self.repair_engine.repair(plan)
 
-        plan = self.fixer.apply(plan)
+        # Generate branch and pull request metadata
+        pr_metadata = self.pr_generator.generate(plan)
 
-        plan.pull_request = self.pr_generator.generate(plan)
+        branch = pr_metadata["branch"]
+
+        # Create the fix branch
+        self.tools.new_branch(
+            plan.repository,
+            branch
+        )
+
+        # Apply fixes to the fix branch
+        plan = self.fixer.apply(
+            plan,
+            branch=branch
+        )
+
+        # Create the pull request
+        plan.pull_request = self.tools.new_pull_request(
+            plan.repository,
+            pr_metadata["title"],
+            pr_metadata["body"],
+            branch
+        )
 
         plan.completed = True
 

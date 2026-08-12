@@ -37,6 +37,9 @@ class WorkflowTools:
     review_file = staticmethod(review_file_helper)
     apply_fix = staticmethod(apply_fix_helper)
 
+    new_branch = staticmethod(create_branch)
+    new_pull_request = staticmethod(create_pull_request)
+
 @mcp.tool()
 def repositories():
     """

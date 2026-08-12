@@ -13,9 +13,15 @@ class OpenAIProvider(LLMProvider):
 
     def __init__(
         self,
-        model: str = "gpt-5"
+        model: str | None = None
     ):
         api_key = os.getenv("OPENAI_API_KEY")
+
+        if model is None:
+            model = os.getenv(
+        "OPENAI_MODEL",
+        "gpt-5"
+    )
 
         if not api_key:
             raise RuntimeError(

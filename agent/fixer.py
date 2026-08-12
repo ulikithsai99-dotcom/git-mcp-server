@@ -10,9 +10,13 @@ class Fixer:
     def __init__(self, tools):
         self.tools = tools
 
-    def apply(self, plan: RepairPlan):
+    def apply(
+        self,
+        plan: RepairPlan,
+        branch: str = "main"
+    ):
         """
-        Apply every proposed change.
+        Apply every proposed change to the specified branch.
         """
 
         if not plan.proposed_changes:
@@ -30,7 +34,8 @@ class Fixer:
                     file_path=change.file_path,
                     old_code=change.old_code,
                     new_code=change.new_code,
-                    commit_message=f"Fix: {plan.issue}"
+                    commit_message=f"Fix: {plan.issue}",
+                    branch=branch
                 )
 
                 results.append(result)
@@ -44,4 +49,5 @@ class Fixer:
                 })
 
         plan.fix_results = results
+
         return plan

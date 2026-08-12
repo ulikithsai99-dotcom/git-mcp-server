@@ -36,7 +36,7 @@ def create_branch(repo_name, branch_name):
     }
 
 
-def create_pull_request(repo_name, title, body, head, base="main"):
+def create_pull_request(repo_name, title, body, head, base=None):
     """
     Create a pull request.
     """
@@ -66,39 +66,29 @@ def create_pull_request(repo_name, title, body, head, base="main"):
     }
 
 
-import base64
+def write_file(repo_name, file_path, new_content, commit_message, branch=None):
+    """Update a file in a GitHub repository."""
 
-def write_file(repo_name, file_path, new_content, commit_message,branch="main"):
-    """
-    Update a file in a GitHub repository.
-    """
+    if branch is None:
+        repo = client.get(f"/repos/{USERNAME}/{repo_name}")
+        branch = repo["default_branch"]
 
     file = client.get(
-    f"/repos/{USERNAME}/{repo_name}/contents/{file_path}",
-    params={
-        "ref": branch
-    }
-)
+        f"/repos/{USERNAME}/{repo_name}/contents/{file_path}",
+        params={"ref": branch}
+    )
 
     sha = file["sha"]
 
-    encoded = base64.b64encode(
-        new_content.encode("utf-8")
-    ).decode("utf-8")
+    encoded = base64.b64encode(new_content.encode("utf-8")).decode("utf-8")
 
     data = {
         "message": commit_message,
         "content": encoded,
         "sha": sha,
-        "branch": branch
+        "branch": branch,
     }
 
-    result = client.put(
-        f"/repos/{USERNAME}/{repo_name}/contents/{file_path}",
-        data
-    )
+    result = client.put(f"/repos/{USERNAME}/{repo_name}/contents/{file_path}", data)
 
-    return {
-        "commit": result["commit"]["sha"][:7],
-        "url": result["commit"]["html_url"]
-    }
+    return {"commit": result["commit"]["sha"][:7], "url": result["commit"]["html_url"]}

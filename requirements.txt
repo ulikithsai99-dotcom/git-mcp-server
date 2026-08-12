@@ -1,0 +1,6 @@
+mcp>=1.27.2,<2
+uvicorn
+requests
+python-dotenv
+openai
+pydantic

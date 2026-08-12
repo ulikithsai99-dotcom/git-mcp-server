@@ -5,7 +5,15 @@ load_dotenv()
 
 TOKEN = os.getenv("GITHUB_TOKEN")
 
-USERNAME = "ulikithsai99-dotcom"
+USERNAME = os.getenv(
+    "GITHUB_USERNAME",
+    "ulikithsai99-dotcom"
+)
+
+if not TOKEN:
+    raise RuntimeError(
+        "GITHUB_TOKEN environment variable is not set."
+    )
 
 HEADERS = {
     "Authorization": f"Bearer {TOKEN}",
