@@ -1,5 +1,5 @@
 from mcp.server.fastmcp import FastMCP
-
+from mcp.server.transport_security import TransportSecuritySettings
 from github import *
 from github.replace import replace_code as replace_code_helper
 from github.review_file import review_file as review_file_helper
@@ -25,7 +25,22 @@ from github.workspace_context import (
 )
 from agent.workflow import SoftwareEngineerWorkflow
 
-mcp = FastMCP("GitHub Toolkit")
+mcp = FastMCP(
+    "GitHub MCP Server",
+    transport_security=TransportSecuritySettings(
+        enable_dns_rebinding_protection=True,
+        allowed_hosts=[
+            "localhost:*",
+            "127.0.0.1:*",
+            "git-mcp-server-spbg.onrender.com",
+            "git-mcp-server-spbg.onrender.com:*",
+        ],
+        allowed_origins=[
+            "http://localhost:*",
+            "http://127.0.0.1:*",
+        ],
+    ),
+)
 
 class WorkflowTools:
     """
